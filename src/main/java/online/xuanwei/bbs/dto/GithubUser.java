@@ -6,6 +6,7 @@ public class GithubUser {
     private long id;
     private String bio;
 
+    public GithubUser(){}
     public GithubUser(String name, long id, String bio) {
         this.name = name;
         this.id = id;
@@ -26,6 +27,14 @@ public class GithubUser {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     @Override
