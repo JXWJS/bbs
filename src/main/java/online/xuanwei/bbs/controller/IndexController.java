@@ -1,6 +1,5 @@
 package online.xuanwei.bbs.controller;
 
-import online.xuanwei.bbs.dto.GithubUser;
 import online.xuanwei.bbs.mapper.UserMapper;
 import online.xuanwei.bbs.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,26 +17,19 @@ public class IndexController {
 
     @GetMapping({"/","index"})
     public String index(HttpServletRequest request){
-//      String cookieHeader=request.getHeader("cookie");
-//        Cookie[] cookies = request.getCookies();
-//        if(cookies != null) {
-//
-//            for (Cookie cookie : cookies) {
-//                if (cookie.getName().equals("token")) {
-//                    String token = cookie.getValue();
-//                    User user = userMapper.findByToken(token);
-//                    if (user != null) {
-//                        request.getSession().setAttribute("user", user);
-//                    }
-//                } else {
-//                    request.getSession().setAttribute("user", githubUser);
-//                }
-//                break;
-//            }
-//        }
-//        if(request.getSession().getAttribute("user") ==null)
-//        request.getSession().setAttribute("user", githubUser);
-
+        Cookie[] cookies = request.getCookies();
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
+                    String token = cookie.getValue();
+                    User user = userMapper.findByToken(token);
+                    if (user != null) {
+                        request.getSession().setAttribute("user", user);
+                    }
+                    break;
+                }
+            }
+        }
         return "index";
     }
 }
