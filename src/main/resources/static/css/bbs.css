@@ -1,0 +1,9 @@
+.main{
+    background: url('/images/background.jpg');
+    padding-left: 70px;
+    padding-right: 70px;
+}
+.border-double{
+    border-top-width: 30px;
+    border-top-style: double;
+}
