@@ -61,7 +61,7 @@ public class AuthorizeController {
             user.setBio(githubUser.getBio());
             userMapper.insert(user);
             Cookie cookie = new Cookie("token",token);
-            cookie.setMaxAge(60*60*24*3);
+            cookie.setMaxAge(60*60*24*9);
             response.addCookie(cookie);
             request.getSession().setAttribute("user",user);
             return "redirect:index";

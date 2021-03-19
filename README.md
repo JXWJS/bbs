@@ -10,3 +10,7 @@
 [http工具](https://square.github.io/okhttp/)
 [maven仓库](https://mvnrepository.com/)
 [flyway整合mysql](https://blog.csdn.net/qq_41191715/article/details/104666145)
+
+##  解决问题
+[ajax不执行callback函数问题](https://blog.csdn.net/rhythm923/article/details/66476425)
+
