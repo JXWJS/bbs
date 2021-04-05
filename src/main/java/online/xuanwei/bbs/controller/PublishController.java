@@ -37,7 +37,11 @@ public class PublishController {
 
             return ResultGenerator.genFailResult("请您登录再发布");
         }else {
-            Question question = new Question(title, description, tag, user.getId());
+            Question question = new Question();
+            question.setTitle(title);
+            question.setDescription(description);
+            question.setTag(tag);
+            question.setCreator(user.getId());
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
             questionMapper.create(question);

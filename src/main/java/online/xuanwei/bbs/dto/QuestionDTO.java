@@ -1,9 +1,10 @@
-package online.xuanwei.bbs.model;
+package online.xuanwei.bbs.dto;
 
 import lombok.Data;
+import online.xuanwei.bbs.model.User;
 
 @Data
-public class Question {
+public class QuestionDTO {
     private Integer id;
     private String title;
     private String description;
@@ -14,5 +15,5 @@ public class Question {
     private Integer commentCount;
     private Integer viewCount;
     private Integer likeCount;
-
+    private User user;
 }
