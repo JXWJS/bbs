@@ -12,25 +12,45 @@
         <div style="height: 50px;background: white"><h4><span class="glyphicon glyphicon-list glyphicon-object-align-left"></span>发现</h4></div>
         <hr/>
         <div class="col-lg-9 col-md-12 col-sm-12" style="background: white">
-            <div class="media" th:each="question:${questions}">
+            <div class="media" th:each="question:${questions.questionDTOList}">
                 <div class="media-left">
                     <a href="#">
-                        <img class="media-objec img-circle" th:src="${question.user.getAvatarUrl()}" style="width: 39px;">
+                        <img class="media-object img-circle" th:src="${question.user.getAvatarUrl()}" style="width: 39px;">
                     </a>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading" style="color: #0080FF;" th:text="${question.getTitle()}">Media heading</h4>
                     <span th:text="${question.getDescription()}"></span>
                     <span th:text="${#dates.format(question.getGmtCreate(),'dd MMMM yyyy')}"></span>
+                    <div>
+                        <font size="1px">观看数：<span th:text="${question.getViewCount()}"></span></font>
+                    </div>
                 </div>
             </div>
+
+            <ul class="pager">
+                <block th:if="${questions.getPage()} &gt; 1">
+                <li class="previous"><a th:href="@{/(page=${questions.getPage}-1)}">&larr; 上一页</a></li>
+                </block>
+
+                <block th:if="${questions.getPage()} == 1">
+                    <li class="previous"><a href="javascript:;"> 顶页</a></li>
+                </block>
+
+                <li class="text-center">当前<span id="page" th:text="${questions.getPage()}"></span>页/共<span th:text="${questions.getPages()}"></span>页</li>
+
+                <block th:if="${questions.getPage < questions.getPages} ">
+                <li class="next"><a th:href="@{/(page=${questions.getPage}+1)}">下一页 &rarr;</a></li>
+                </block>
+                <block th:if="${questions.getPage >= questions.getPages} ">
+                    <li class="next"><a href="javascript:;">尾页</a></li>
+                </block>
+            </ul>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12">
             <h3>热门话题</h3>
         </div>
     </div>
 </div>
-
-
 </body>
 </html>

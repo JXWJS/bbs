@@ -13,6 +13,12 @@ public interface QuestionMapper {
     @Insert({"insert into question(title,description,gmt_create,gmt_modified,creator,tag) values (#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})"})
     public void create(Question question);
 
-    @Select("select * from question")
-    public List<Question> list();
+    @Select("select * from question limit #{offset},#{size}")
+    public List<Question> list(Integer offset, Integer size);
+
+    @Select("select count(*) from question")
+    public Integer getCount();
+
+
+
 }

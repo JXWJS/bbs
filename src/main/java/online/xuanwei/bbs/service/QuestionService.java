@@ -22,8 +22,9 @@ public class QuestionService {
 
     List<QuestionDTO> questionDTOList;
 
-    public List<QuestionDTO> list() {
-        List<Question> questionList = questionMapper.list();
+    public List<QuestionDTO> list(Integer page, Integer size) {
+        Integer offset = size*(page-1);
+        List<Question> questionList = questionMapper.list(offset,size);
         questionDTOList = new ArrayList<>();
         for (Question question:questionList
              ) {
@@ -34,5 +35,9 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
         return questionDTOList;
+    }
+
+    public Integer getCount(){
+       return questionMapper.getCount();
     }
 }
