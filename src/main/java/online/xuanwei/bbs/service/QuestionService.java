@@ -40,4 +40,29 @@ public class QuestionService {
     public Integer getCount(){
        return questionMapper.getCount();
     }
+
+    public Integer getMyCount( Integer userId){return  questionMapper.getMyCount(userId);}
+
+    public List<QuestionDTO> getMYQuestionDTOList(Integer userId,Integer page, Integer size) {
+        Integer offset = size*(page-1);
+        List<Question> questionList = questionMapper.listByUserId(userId,offset,size);
+        questionDTOList = new ArrayList<>();
+        for (Question question:questionList
+        ) {
+            User user = userMapper.findByCreator(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question,questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        return questionDTOList;
+    }
+
+    public QuestionDTO getById(Integer id){
+        QuestionDTO questionDTO = new QuestionDTO();
+        Question question = questionMapper.getById(id);
+        BeanUtils.copyProperties(question,questionDTO);
+        questionDTO.setUser(userMapper.findByCreator(question.getCreator()));
+        return questionDTO;
+    }
 }

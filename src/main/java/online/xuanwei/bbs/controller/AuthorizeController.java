@@ -49,25 +49,45 @@ public class AuthorizeController {
         );
         System.out.println(accessToken);
         GithubUser githubUser = githubProvider.getUser(accessToken);
-        System.out.println(githubUser.toString());
-        if(githubUser.getId() !=0){
-            User user = new User();
-            user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setName(githubUser.getName());
-            String token = UUID.randomUUID().toString();
-            user.setToken(token);
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            user.setBio(githubUser.getBio());
-            user.setAvatarUrl(githubUser.getAvatar_url());
-            userMapper.insert(user);
-            Cookie cookie = new Cookie("token",token);
-            cookie.setMaxAge(60*60*24*20);
-            response.addCookie(cookie);
-            request.getSession().setAttribute("user",user);
-            return "redirect:index";
+/*        System.out.println(githubUser.toString()); */
+            if(githubUser.getId() !=0){
+            if(userMapper.findByAccountID((int)githubUser.getId()) == null ) {
+                User user = new User();
+                user.setAccountId(String.valueOf(githubUser.getId()));
+                user.setName(githubUser.getName());
+                String token = UUID.randomUUID().toString();
+                user.setToken(token);
+                user.setGmtCreate(System.currentTimeMillis());
+                user.setGmtModified(user.getGmtCreate());
+                user.setBio(githubUser.getBio());
+                user.setAvatarUrl(githubUser.getAvatar_url());
+                userMapper.insert(user);
+                Cookie cookie = new Cookie("token", token);
+                cookie.setMaxAge(60 * 60 * 24 * 20);
+                response.addCookie(cookie);
+                request.getSession().setAttribute("user", user);
+                return "redirect:index";
+            }else {
+                User user = new User();
+                user = userMapper.findByAccountID((int)githubUser.getId());
+                Cookie cookie = new Cookie("token", user.getToken());
+                cookie.setMaxAge(60 * 60 * 24 * 20);
+                response.addCookie(cookie);
+                request.getSession().setAttribute("user", user);
+                return "redirect:index";
+            }
         }else{
             return "redirect:index";
         }
+    }
+
+    @GetMapping("logout")
+    public String logout(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse){
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        httpServletResponse.addCookie(cookie);
+        httpServletRequest.getSession().removeAttribute("user");
+        return "redirect:index";
     }
 }

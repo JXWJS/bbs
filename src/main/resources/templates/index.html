@@ -14,9 +14,7 @@
         <div class="col-lg-9 col-md-12 col-sm-12" style="background: white">
             <div class="media" th:each="question:${questions.questionDTOList}">
                 <div class="media-left">
-                    <a href="#">
                         <img class="media-object img-circle" th:src="${question.user.getAvatarUrl()}" style="width: 39px;">
-                    </a>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading" style="color: #0080FF;" th:text="${question.getTitle()}">Media heading</h4>

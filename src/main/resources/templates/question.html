@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <header th:replace="header.html"></header>
+</head>
+
+<body class="main">
+
+<div class="container-fluid">
+    <div class="row">
+        <div style="height: 50px;background: white"><h4><span class="glyphicon glyphicon-list glyphicon-object-align-left"></span></h4></div>
+        <hr/>
+        <div class="col-lg-8 col-md-12 col-sm-12" style="background: #ffffff">
+
+            <h3 th:text="${question.getTitle()}"></h3>
+            <div>
+                <font size="1px"><span th:text="${question.getTag()}"></span></font>
+                <font size="1px">作者：<span th:text="${question.getUser().getName()}"></span></font>
+                <font size="1px">阅读数：<span th:text="${question.getViewCount()}"></span></font>
+                <font size="1px">评论数：<span th:text="${question.getCommentCount()}"></span></font>
+
+                <th:block th:if="${session.user != null && session.user.id == question.creator}">
+                    <font size="2px">编辑</font>
+                </th:block>
+
+            </div>
+            <hr/>
+            <p/>
+            <div>
+                <span th:text="${question.getDescription()}"></span>
+            </div>
+
+        </div>
+        <div class="col-lg-1"></div>
+        <div class="col-lg-3 col-md-12 col-sm-12" style="background: #ffffff">
+            <h4>提问者
+                <img class="media-object img-circle" th:src="${question.user.getAvatarUrl()}" style="width: 39px;">
+                <span th:text="${question.getUser().getName()}"></span></h4>
+            <h4>相关问题:</h4>
+
+    </div>
+    </div>
+</div>
+</body>
+</html>

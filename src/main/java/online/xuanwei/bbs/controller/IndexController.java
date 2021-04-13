@@ -31,19 +31,6 @@ public class IndexController {
                         @RequestParam(name = "page",defaultValue = "1") Integer page,
                         @RequestParam(name = "size",defaultValue = "7") Integer size){
         System.out.println(page);
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("token")) {
-                    String token = cookie.getValue();
-                    User user = userMapper.findByToken(token);
-                    if (user != null) {
-                        request.getSession().setAttribute("user", user);
-                    }
-                    break;
-                }
-            }
-        }
         List<QuestionDTO> questionDTOList = questionService.list(page,size);
         PaginationDTO paginationDTO = new PaginationDTO();
         paginationDTO.setQuestionDTOList(questionDTOList);
