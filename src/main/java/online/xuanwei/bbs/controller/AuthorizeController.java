@@ -4,6 +4,7 @@ import online.xuanwei.bbs.dto.AccessTokenDTO;
 import online.xuanwei.bbs.dto.GithubUser;
 import online.xuanwei.bbs.mapper.UserMapper;
 import online.xuanwei.bbs.model.User;
+import online.xuanwei.bbs.model.UserExample;
 import online.xuanwei.bbs.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -33,11 +35,13 @@ public class AuthorizeController {
     private UserMapper userMapper;
 
 
+
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state")String state,
                            HttpServletRequest request,
                            HttpServletResponse response){
+
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setCode(code);
         accessTokenDTO.setState(state);
@@ -49,9 +53,13 @@ public class AuthorizeController {
         );
         System.out.println(accessToken);
         GithubUser githubUser = githubProvider.getUser(accessToken);
-/*        System.out.println(githubUser.toString()); */
+
             if(githubUser.getId() !=0){
-            if(userMapper.findByAccountID((int)githubUser.getId()) == null ) {
+                UserExample userExample = new UserExample();
+                userExample.createCriteria()
+                        .andAccountIdEqualTo("38238021");
+                List<User> users = userMapper.selectByExample(userExample);
+                if(users.size()  == 0 ) {
                 User user = new User();
                 user.setAccountId(String.valueOf(githubUser.getId()));
                 user.setName(githubUser.getName());
@@ -69,7 +77,9 @@ public class AuthorizeController {
                 return "redirect:index";
             }else {
                 User user = new User();
-                user = userMapper.findByAccountID((int)githubUser.getId());
+                user = users.get(0);
+                user.setToken(UUID.randomUUID().toString());
+                userMapper.updateByExample(user,userExample);
                 Cookie cookie = new Cookie("token", user.getToken());
                 cookie.setMaxAge(60 * 60 * 24 * 20);
                 response.addCookie(cookie);

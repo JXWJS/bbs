@@ -5,6 +5,7 @@ import online.xuanwei.bbs.mapper.QuestionMapper;
 import online.xuanwei.bbs.mapper.UserMapper;
 import online.xuanwei.bbs.model.Question;
 import online.xuanwei.bbs.model.User;
+import online.xuanwei.bbs.model.UserExample;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,10 @@ public class QuestionService {
         questionDTOList = new ArrayList<>();
         for (Question question:questionList
              ) {
-            User user = userMapper.findByCreator(question.getCreator());
+            List<User> users = getByUserKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            questionDTO.setUser(users.get(0));
             questionDTOList.add(questionDTO);
         }
         return questionDTOList;
@@ -49,10 +50,10 @@ public class QuestionService {
         questionDTOList = new ArrayList<>();
         for (Question question:questionList
         ) {
-            User user = userMapper.findByCreator(question.getCreator());
+            List<User> users = getByUserKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            questionDTO.setUser(users.get(0));
             questionDTOList.add(questionDTO);
         }
         return questionDTOList;
@@ -62,7 +63,13 @@ public class QuestionService {
         QuestionDTO questionDTO = new QuestionDTO();
         Question question = questionMapper.getById(id);
         BeanUtils.copyProperties(question,questionDTO);
-        questionDTO.setUser(userMapper.findByCreator(question.getCreator()));
+        questionDTO.setUser(getByUserKey(question.getCreator()).get(0));
         return questionDTO;
+    }
+
+    public  List<User> getByUserKey(Integer id){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andIdEqualTo(id);
+        return userMapper.selectByExample(userExample);
     }
 }
