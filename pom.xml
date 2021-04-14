@@ -95,7 +95,7 @@
             </plugin>
 
             <plugin>
-                <!--整合mysql和flyway-->
+                <!--整合mrysql和flyway-->
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.2.4</version>
@@ -104,6 +104,19 @@
                     <user>root</user>
                     <password>lx17606106551</password>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.23</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.7</version>
                 <dependencies>
                     <dependency>
                         <groupId>mysql</groupId>

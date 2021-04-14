@@ -13,10 +13,12 @@
         <div class="col-lg-9 col-md-12 col-sm-12" >
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发起</h2>
             <!-- form表单提交后会刷新页面，ajax回调出现异常 -->
+                <th:block th:if="${edit == null}">
             <div  class="form-group"  >
                 <div class="form-group">
+
                     <label for="title">问题标题:</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="问题标题">
+                    <input type="text" class="form-control" id="title" name="title"   placeholder="问题标题">
                 </div>
                 <div class="form-group">
                     <label for="description">问题内容:</label>
@@ -26,8 +28,33 @@
                     <label for="tag">添加标签:</label>
                     <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签，以，间隔">
                 </div>
-                <button type="submit" class="btn btn-success" id="saveButton">提交</button>
+                <button type="button" class="btn btn-success" id="saveButton">提交</button>
             </div>
+                </th:block>
+
+                <th:block th:if="${edit != null}">
+                    <form method="get" th:action="@{/publish_update}">
+
+                    <div  class="form-group"  >
+                        <div class="form-group">
+
+                            <input type="hidden" name="id" th:value="${edit.getId()}">
+                            <label for="title">问题标题:</label>
+                            <input type="text" class="form-control" th:value="${edit.title}" name="title"   placeholder="问题标题">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">问题内容:</label>
+                            <textarea class="form-control"name="description" th:text="${edit.description}" cols="30" rows="10"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="tag">添加标签:</label>
+                            <input type="text" class="form-control" th:value="${edit.tag}" name="tag" placeholder="输入标签，以，间隔">
+                        </div>
+                        <button type="submit" class="btn btn-success">提交</button>
+                    </div>
+
+            </form>
+                </th:block>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12">
             <div>

@@ -21,7 +21,7 @@
                 <font size="1px">评论数：<span th:text="${question.getCommentCount()}"></span></font>
 
                 <th:block th:if="${session.user != null && session.user.id == question.creator}">
-                    <font size="2px">编辑</font>
+                    <font size="2px"><a th:href="@{/publish/edit(id=${question.getId()})}">编辑</a></font>
                 </th:block>
 
             </div>
