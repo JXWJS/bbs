@@ -16,3 +16,6 @@
 ##  解决问题
 [ajax不执行callback函数问题](https://blog.csdn.net/rhythm923/article/details/66476425)
 
+--
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+--

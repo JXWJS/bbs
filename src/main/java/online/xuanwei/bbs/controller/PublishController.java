@@ -1,8 +1,12 @@
 package online.xuanwei.bbs.controller;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.QEncoderStream;
+import online.xuanwei.bbs.exception.CustomizeErrorCode;
+import online.xuanwei.bbs.exception.CustomizeException;
+import online.xuanwei.bbs.exception.ICustomizeErrorCode;
 import online.xuanwei.bbs.mapper.QuestionMapper;
+import online.xuanwei.bbs.mapper.QuestionMapperExt;
 import online.xuanwei.bbs.model.Question;
+import online.xuanwei.bbs.model.QuestionExample;
 import online.xuanwei.bbs.model.User;
 import online.xuanwei.bbs.util.Result;
 import online.xuanwei.bbs.util.ResultGenerator;
@@ -19,10 +23,13 @@ public class PublishController {
     @Autowired
     QuestionMapper questionMapper;
 
+    @Autowired
+    QuestionMapperExt questionMapperExt;
+
 
     @GetMapping("/publish/edit")
     public String edit(@RequestParam(name="id") Integer id, Model model){
-       Question question =  questionMapper.getById(id);
+       Question question =  questionMapper.selectByPrimaryKey(id);
        model.addAttribute("edit",question);
         return "publish";
     }
@@ -38,9 +45,12 @@ public class PublishController {
       question.setDescription(description);
       question.setTag(tag);
       question.setGmtModified(System.currentTimeMillis());
-      questionMapper.update(question);
-      System.out.println(questionMapper.getById(question.getId()).toString());
-        return "redirect:index";
+      int updated = questionMapperExt.updateContentByPrimaryKey(question);
+      if (updated !=1){
+          throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+      }
+          return "redirect:question?id=" + id;
+
     }
 
     @GetMapping("/publish")
@@ -67,7 +77,7 @@ public class PublishController {
             question.setCreator(user.getId());
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.create(question);
+            questionMapper.insert(question);
             return  ResultGenerator.genSuccessResult("发布成功");
         }
 

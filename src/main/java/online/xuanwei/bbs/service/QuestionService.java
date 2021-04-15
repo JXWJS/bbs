@@ -2,10 +2,13 @@ package online.xuanwei.bbs.service;
 
 import online.xuanwei.bbs.dto.QuestionDTO;
 import online.xuanwei.bbs.mapper.QuestionMapper;
+import online.xuanwei.bbs.mapper.QuestionMapperExt;
 import online.xuanwei.bbs.mapper.UserMapper;
 import online.xuanwei.bbs.model.Question;
+import online.xuanwei.bbs.model.QuestionExample;
 import online.xuanwei.bbs.model.User;
 import online.xuanwei.bbs.model.UserExample;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +24,14 @@ public class QuestionService {
     @Autowired
     QuestionMapper questionMapper;
 
+    @Autowired
+    QuestionMapperExt questionMapperExt;
+
     List<QuestionDTO> questionDTOList;
 
     public List<QuestionDTO> list(Integer page, Integer size) {
         Integer offset = size*(page-1);
-        List<Question> questionList = questionMapper.list(offset,size);
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(new QuestionExample(),new RowBounds(offset,size));
         questionDTOList = new ArrayList<>();
         for (Question question:questionList
              ) {
@@ -39,14 +45,19 @@ public class QuestionService {
     }
 
     public Integer getCount(){
-       return questionMapper.getCount();
+       return (int)questionMapper.countByExample(new QuestionExample());
     }
 
-    public Integer getMyCount( Integer userId){return  questionMapper.getMyCount(userId);}
+    public Integer getMyCount( Integer userId){
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().andCreatorEqualTo(userId);
+                return  (int)questionMapper.countByExample(questionExample);}
 
     public List<QuestionDTO> getMYQuestionDTOList(Integer userId,Integer page, Integer size) {
         Integer offset = size*(page-1);
-        List<Question> questionList = questionMapper.listByUserId(userId,offset,size);
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().andCreatorEqualTo(userId);
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size));
         questionDTOList = new ArrayList<>();
         for (Question question:questionList
         ) {
@@ -61,7 +72,7 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id){
         QuestionDTO questionDTO = new QuestionDTO();
-        Question question = questionMapper.getById(id);
+        Question question = questionMapper.selectByPrimaryKey(id);
         BeanUtils.copyProperties(question,questionDTO);
         questionDTO.setUser(getByUserKey(question.getCreator()).get(0));
         return questionDTO;
@@ -71,5 +82,12 @@ public class QuestionService {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andIdEqualTo(id);
         return userMapper.selectByExample(userExample);
+    }
+
+    public void incView(Integer id) {
+        Question question = new Question();
+        question.setId(id);
+        questionMapperExt.incView(question);
+
     }
 }

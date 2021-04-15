@@ -57,7 +57,7 @@ public class AuthorizeController {
             if(githubUser.getId() !=0){
                 UserExample userExample = new UserExample();
                 userExample.createCriteria()
-                        .andAccountIdEqualTo("38238021");
+                        .andAccountIdEqualTo(Long.toString(githubUser.getId()));
                 List<User> users = userMapper.selectByExample(userExample);
                 if(users.size()  == 0 ) {
                 User user = new User();

@@ -26,10 +26,10 @@
                     <h4 class="media-heading" style="color: #0080FF;" th:text="${question.getTitle()}">Media heading</h4>
                     </a>
                         <span th:text="${question.getDescription()}"></span>
-                    <span th:text="${#dates.format(question.getGmtCreate(),'dd MMMM yyyy')}"></span>
                     <div>
-                        <font size="1px">观看数：<span th:text="${question.getViewCount()}"></span></font>
-                        <font size="1px">评论数：<span th:text="${question.getCommentCount()}"></span></font>
+                        <font size="1px">浏览数：<span th:text="${question.getViewCount()}"></span></font>
+                        <font size="1px">回复数：<span th:text="${question.getCommentCount()}"></span></font>
+                        <font size="1px"><span th:text="${#dates.format(question.getGmtCreate(),'dd MMMM yyyy')}"></span></font>
                     </div>
                 </div>
             </div>

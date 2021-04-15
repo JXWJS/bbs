@@ -2,6 +2,8 @@ package online.xuanwei.bbs.controller;
 
 import online.xuanwei.bbs.dto.PaginationDTO;
 import online.xuanwei.bbs.dto.QuestionDTO;
+import online.xuanwei.bbs.exception.CustomizeErrorCode;
+import online.xuanwei.bbs.exception.CustomizeException;
 import online.xuanwei.bbs.mapper.UserMapper;
 import online.xuanwei.bbs.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,10 @@ public class IndexController {
         paginationDTO.setPage(page);
         paginationDTO.setSize(size);
         paginationDTO.setPages(size, questionService.getCount());
+        //System.out.println("测试页码"+page+"   "+paginationDTO.getPages());
+        if (page>paginationDTO.getPages()){
+            throw new CustomizeException(CustomizeErrorCode.PAGE_NOT_FOUND);
+        }
         if(model.getAttribute("questions")==null) {
             model.addAttribute("questions", paginationDTO);
         }else{

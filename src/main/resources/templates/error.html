@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>header</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bbs.css"/>
+    <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
+    <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/publish.js" type="application/javascript"></script>
+</head>
+<body class="main">
+<div class="border-double"></div><div class="jumbotron">
+
+<h1>出错啦！</h1>
+    <h2><span th:text="${message}"></span></h2>
+<a href="/">回到主页</a>
+</div>
+</body>
+</html>
