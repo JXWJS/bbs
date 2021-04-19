@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="" xmlns:th="http://www.thymeleaf.org">
+<html lang="" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <header th:replace="header.html"></header>
+    <script src="/js/question.js" type="application/javascript"></script>
 </head>
 
 <body class="main">
@@ -12,8 +13,9 @@
         <div style="height: 50px;background: white"><h4><span class="glyphicon glyphicon-list glyphicon-object-align-left"></span></h4></div>
         <hr/>
         <div class="col-lg-8 col-md-12 col-sm-12" style="background: #ffffff">
-
+            <div class="col-lg-12 col-md-12 col-sm-12" style="background: #ffffff">
             <h3 th:text="${question.getTitle()}"></h3>
+                <input type="hidden" id="questionId" th:value="${question.id}">
             <div>
                 <font size="1px"><span th:text="${question.getTag()}"></span></font>
                 <font size="1px">作者：<span th:text="${question.getUser().getName()}"></span></font>
@@ -23,20 +25,97 @@
                 <th:block th:if="${session.user != null && session.user.id == question.creator}">
                     <font size="2px"><a th:href="@{/publish/edit(id=${question.getId()})}">编辑</a></font>
                 </th:block>
-
             </div>
             <hr/>
             <p/>
+
             <div>
                 <span th:text="${question.getDescription()}"></span>
+                <hr/>
             </div>
 
+                <!--回复-->
+                <h3><span th:text="${question.getCommentCount()}"></span>个回复</h3>
+                <div th:each="comment:${comments}">
+                <div class="media" style="border-bottom: 1px;border-bottom-style:dotted;border-bottom-color: #eeee11">
+                    <div class="media-left">
+                        <img class="media-object img-circle" th:src="${comment.user.avatarUrl}" style="width: 39px;">
+                    </div>
+                    <div class="media-body">
+                        <span th:text="${comment.user.getName()}"></span>
+                        <div style="padding-top: 10px">
+                        <span th:text="${comment.getContent()}"></span>
+                        </div>
+                        <div style="padding-top: 10px">
+                            <span class="glyphicon glyphicon-thumbs-up"></span><span th:text="${comment.likeCount}"></span>&nbsp;&nbsp;
+                                <span class="glyphicon glyphicon-comment" onclick="collapseComments(this)"  th:data-id="${comment.getId()}"></span>&nbsp;&nbsp;
+                            <span class="navbar-right" style="padding-right: 18px;" th:text="${#dates.format(comment.getGmtCreate(),' yyyy-MM-dd hh:mm:ss')}"></span>
+                            <!-- 二级评论-->
+                                <div class="collapse" th:id="${'comment-'+comment.id}">
+<!--
+                                    <div th:each="comment1:${comments}">
+                                        <div class="media" style="border-bottom: 1px;border-bottom-style:dotted;border-bottom-color: #eeee11">
+                                            <div class="media-left">
+                                                <img class="media-object img-circle" th:src="${comment1.user.avatarUrl}" style="width: 39px;">
+                                            </div>
+                                            <div class="media-body">
+                                                <span th:text="${comment1.user.getName()}"></span>
+                                                <div style="padding-top: 10px">
+                                                    <span th:text="${comment1.getContent()}"></span>
+                                                </div>
+                                            </div></div></div>
+                                    -->
+                                    <div th:id=""></div>
+                                    <input class="form-control center-block" th:id="${'inlineComment-'+comment.getId()}"></input>
+                                    <button type="button" class="btn btn-info" onclick="postComments(this)" th:data-id="${comment.getId()}">回复</button>
+                                 </div>
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <hr/>
+                <!-- 回复!!!! -->
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12" style="background: #ffffff">
+                <th:block th:if="${session.user == null}">
+                    请点击<a href="https://github.com/login/oauth/authorize?client_id=c1e991766c0dbda7d365&redirect_uri=http://localhost:9999/callback&scope=user&state=1">登录</a>
+                    再评论！
+                </th:block>
+                <th:block th:if="${session.user != null}">
+               <div class="media">
+                   <div class="media-left">
+                <img class="media-object img-circle" th:src="${session.user.getAvatarUrl()}" style="width: 39px;">
+                   </div>
+                   <div class="media-body">
+                       <span th:text="${session.user.getName()}"></span>
+                   </div>
+               </div>
+                    <textarea class="form-control center-block" id="oneComment"></textarea>
+                    <button type="button" class="btn btn-info" onclick="postComment()">回复</button>
+                </th:block>
+
+            </div>
         </div>
-        <div class="col-lg-1"></div>
+
+
+
+        <div class="col-lg-1 col-md-12 col-sm-12">
+            <div  class="main" style="height: 20px"></div>
+        </div>
         <div class="col-lg-3 col-md-12 col-sm-12" style="background: #ffffff">
-            <h4>提问者
-                <img class="media-object img-circle" th:src="${question.user.getAvatarUrl()}" style="width: 39px;">
-                <span th:text="${question.getUser().getName()}"></span></h4>
+            <h4>
+                提问者:
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object img-circle" th:src="${question.user.getAvatarUrl()}" style="width: 39px;">
+                    </div>
+                    <div class="media-body" style="padding-top: 10px">
+                        <span th:text="${question.getUser().getName()}"></span>
+                    </div>
+                </div>
+            </h4>
             <h4>相关问题:</h4>
 
     </div>

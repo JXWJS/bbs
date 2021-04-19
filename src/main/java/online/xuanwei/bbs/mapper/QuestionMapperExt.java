@@ -8,4 +8,6 @@ public interface QuestionMapperExt {
     int incView(Question record);
 
     int updateContentByPrimaryKey(Question record);
+
+    int incCommentCount(Question question);
 }

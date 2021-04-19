@@ -90,4 +90,8 @@ public class QuestionService {
         questionMapperExt.incView(question);
 
     }
+
+    public  void incCommentCount(Question question){
+        questionMapperExt.incCommentCount(question);
+    }
 }
