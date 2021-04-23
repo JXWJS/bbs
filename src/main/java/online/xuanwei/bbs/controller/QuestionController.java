@@ -2,6 +2,7 @@ package online.xuanwei.bbs.controller;
 
 import online.xuanwei.bbs.dto.CommentDTO;
 import online.xuanwei.bbs.dto.QuestionDTO;
+import online.xuanwei.bbs.dto.TagDTO;
 import online.xuanwei.bbs.service.CommentService;
 import online.xuanwei.bbs.service.QuestionService;
 import online.xuanwei.bbs.util.CommentTypeEnum;
@@ -26,9 +27,12 @@ public class QuestionController {
     public String questions(@RequestParam(name = "id") Integer id, Model model){
         QuestionDTO questionDTO = questionService.getById(id);
         List<CommentDTO> commentDTOList = commentService.listByTargetId(id, CommentTypeEnum.QUESTION.getValue());
+        System.out.println("大小"+commentDTOList.size());
         questionService.incView(id);
+        List<TagDTO> tagDTOS = questionService.getByLikeTag(questionDTO);
         model.addAttribute("question",questionDTO);
         model.addAttribute("comments",commentDTOList);
+        model.addAttribute("linkQuestion",tagDTOS);
         return "question";
 
     }

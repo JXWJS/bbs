@@ -1,6 +1,7 @@
 package online.xuanwei.bbs.service;
 
 import online.xuanwei.bbs.dto.QuestionDTO;
+import online.xuanwei.bbs.dto.TagDTO;
 import online.xuanwei.bbs.mapper.QuestionMapper;
 import online.xuanwei.bbs.mapper.QuestionMapperExt;
 import online.xuanwei.bbs.mapper.UserMapper;
@@ -31,7 +32,9 @@ public class QuestionService {
 
     public List<QuestionDTO> list(Integer page, Integer size) {
         Integer offset = size*(page-1);
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(new QuestionExample(),new RowBounds(offset,size));
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size));
         questionDTOList = new ArrayList<>();
         for (Question question:questionList
              ) {
@@ -56,6 +59,7 @@ public class QuestionService {
     public List<QuestionDTO> getMYQuestionDTOList(Integer userId,Integer page, Integer size) {
         Integer offset = size*(page-1);
         QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
         questionExample.createCriteria().andCreatorEqualTo(userId);
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size));
         questionDTOList = new ArrayList<>();
@@ -93,5 +97,24 @@ public class QuestionService {
 
     public  void incCommentCount(Question question){
         questionMapperExt.incCommentCount(question);
+    }
+
+
+
+    public List<TagDTO> getByLikeTag(QuestionDTO questionDTO) {
+        Question question = new Question();
+        BeanUtils.copyProperties(questionDTO,question);
+        question.setTag(question.getTag().replace(",","|"));
+        List<Question> questionList = questionMapperExt.selectByLikeTag(question);
+        List<TagDTO> tagDTOList = new ArrayList<>();
+        if (questionList.size() >0){
+            for (Question question1:questionList
+                 ) {
+                TagDTO tagDTO = new TagDTO();
+                BeanUtils.copyProperties(question1,tagDTO);
+                tagDTOList.add(tagDTO);
+            }
+        }
+return tagDTOList;
     }
 }

@@ -17,16 +17,26 @@
             <h3 th:text="${question.getTitle()}"></h3>
                 <input type="hidden" id="questionId" th:value="${question.id}">
             <div>
-                <font size="1px"><span th:text="${question.getTag()}"></span></font>
-                <font size="1px">作者：<span th:text="${question.getUser().getName()}"></span></font>
-                <font size="1px">阅读数：<span th:text="${question.getViewCount()}"></span></font>
-                <font size="1px">评论数：<span th:text="${question.getCommentCount()}"></span></font>
+                <span th:each="tag:${question.tag.split(',')}">
+
+                <font size="3px"><span class="label label-primary glyphicon glyphicon-tag" th:text="${tag}"></span></font>
+                    &nbsp;
+                </span>
+
+                <div>
+                <font size="2px">作者：<span th:text="${question.getUser().getName()}"></span></font>
+                <font size="2px">阅读数：<span th:text="${question.getViewCount()}"></span></font>
+                <font size="2px">评论数：<span th:text="${question.getCommentCount()}"></span></font>
+
+                    <div style="padding-top: 15px;">
 
                 <th:block th:if="${session.user != null && session.user.id == question.creator}">
-                    <font size="2px"><a th:href="@{/publish/edit(id=${question.getId()})}">编辑</a></font>
+                    <font size="2px"><a th:href="@{/publish/edit(id=${question.getId()})}"><span class="glyphicon glyphicon-pencil"></span>编辑</a></font>
                 </th:block>
+                    </div>
             </div>
             <hr/>
+            </div>
             <p/>
 
             <div>
@@ -34,7 +44,7 @@
                 <hr/>
             </div>
 
-                <!--回复-->
+                <!--评论-->
                 <h3><span th:text="${question.getCommentCount()}"></span>个回复</h3>
                 <div th:each="comment:${comments}">
                 <div class="media" style="border-bottom: 1px;border-bottom-style:dotted;border-bottom-color: #eeee11">
@@ -47,28 +57,17 @@
                         <span th:text="${comment.getContent()}"></span>
                         </div>
                         <div style="padding-top: 10px">
-                            <span class="glyphicon glyphicon-thumbs-up"></span><span th:text="${comment.likeCount}"></span>&nbsp;&nbsp;
-                                <span class="glyphicon glyphicon-comment" onclick="collapseComments(this)"  th:data-id="${comment.getId()}"></span>&nbsp;&nbsp;
+                            <span class="glyphicon glyphicon-thumbs-up"></span><span th:text="${comment.likeCount}"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span class="glyphicon glyphicon-comment" onclick="collapseComments(this)"  th:data-id="${comment.getId()}" th:text="${comment.commentCount}"></span>&nbsp;&nbsp;
                             <span class="navbar-right" style="padding-right: 18px;" th:text="${#dates.format(comment.getGmtCreate(),' yyyy-MM-dd hh:mm:ss')}"></span>
                             <!-- 二级评论-->
                                 <div class="collapse" th:id="${'comment-'+comment.id}">
-<!--
-                                    <div th:each="comment1:${comments}">
-                                        <div class="media" style="border-bottom: 1px;border-bottom-style:dotted;border-bottom-color: #eeee11">
-                                            <div class="media-left">
-                                                <img class="media-object img-circle" th:src="${comment1.user.avatarUrl}" style="width: 39px;">
-                                            </div>
-                                            <div class="media-body">
-                                                <span th:text="${comment1.user.getName()}"></span>
-                                                <div style="padding-top: 10px">
-                                                    <span th:text="${comment1.getContent()}"></span>
-                                                </div>
-                                            </div></div></div>
-                                    -->
-                                    <div th:id=""></div>
+
                                     <input class="form-control center-block" th:id="${'inlineComment-'+comment.getId()}"></input>
                                     <button type="button" class="btn btn-info" onclick="postComments(this)" th:data-id="${comment.getId()}">回复</button>
                                  </div>
+
+
 
                         </div>
                     </div>
@@ -117,9 +116,25 @@
                 </div>
             </h4>
             <h4>相关问题:</h4>
+            <ul th:each="tagQuestion:${linkQuestion}">
+                <font size="3px">
+                    <a th:href="@{/question(id=${tagQuestion.getId()})}">
+
+                        <li th:text="${tagQuestion.title}">
+                        </li>
+                    </a>
+                        <span th:each="tagLink:${tagQuestion.tag.split(',')}">
+                                        <font size="2px"><span class="label label-warning glyphicon glyphicon-tag" th:text="${tagLink}"></span></font>&nbsp;
+                                    </span>
+
+                </font>
+
+            </ul>
 
     </div>
     </div>
 </div>
 </body>
+
+
 </html>

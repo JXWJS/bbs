@@ -1,8 +1,10 @@
 package online.xuanwei.bbs.controller;
 
+import online.xuanwei.bbs.dto.NotificationDTO;
 import online.xuanwei.bbs.dto.PaginationDTO;
 import online.xuanwei.bbs.dto.QuestionDTO;
 import online.xuanwei.bbs.model.User;
+import online.xuanwei.bbs.service.NotificationService;
 import online.xuanwei.bbs.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,9 @@ public class ProfileController {
     @Autowired
     QuestionService questionService;
 
+    @Autowired
+    NotificationService notificationService;
+
     User user;
 
 
@@ -31,8 +36,6 @@ public class ProfileController {
                           @RequestParam(name = "page",defaultValue = "1") Integer page,
                           @RequestParam(name = "size",defaultValue = "7") Integer size){
         if("questions".equals(action)){
-            model.addAttribute("section","questions");
-            model.addAttribute("sectionName","我的问题");
             user = (User)httpServletRequest.getSession().getAttribute("user");
             List<QuestionDTO> questionDTOList = questionService.getMYQuestionDTOList(user.getId(),page, size);
             PaginationDTO paginationDTO = new PaginationDTO();
@@ -43,11 +46,18 @@ public class ProfileController {
             if (model.getAttribute("myQuestions") != null) {
                 model.getAttribute("myQuestions");
             }
-           model.addAttribute("myQuestions", paginationDTO);
+                List<NotificationDTO> notificationDTOList = notificationService.getNotifier(user);
+                model.addAttribute("notificationlist", notificationDTOList);
+
+            model.addAttribute("myQuestions", paginationDTO);
+            model.addAttribute("section","questions");
+            model.addAttribute("sectionName","我的问题");
 
         }else if("replies".equals(action)){
             model.addAttribute("section","replies");
             model.addAttribute("sectionName","最新回复");
+            List<NotificationDTO> notificationDTOList = notificationService.getNotifier(user);
+            model.addAttribute("notificationlist", notificationDTOList);
         }
 
 
@@ -55,5 +65,10 @@ public class ProfileController {
     }
 
 
+    @GetMapping("/profile/readAll")
+    public String readAll(){
+        notificationService.readAll();
+        return "redirect:index";
+    }
 
 }

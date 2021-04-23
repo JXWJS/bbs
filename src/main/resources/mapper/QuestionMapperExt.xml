@@ -54,4 +54,11 @@
     tag = #{tag,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByLikeTag" parameterType="online.xuanwei.bbs.model.Question" resultMap="BaseResultMap">
+    select id,title,tag,description from question
+    where tag regexp #{tag,jdbcType=VARCHAR}
+    and id != #{id,jdbcType=INTEGER}
+
+  </select>
 </mapper>

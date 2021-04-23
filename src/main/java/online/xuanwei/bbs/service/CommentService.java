@@ -3,10 +3,10 @@ package online.xuanwei.bbs.service;
 import online.xuanwei.bbs.dto.CommentDTO;
 import online.xuanwei.bbs.exception.CustomizeErrorCode;
 import online.xuanwei.bbs.exception.CustomizeException;
-import online.xuanwei.bbs.mapper.CommentMapper;
-import online.xuanwei.bbs.mapper.UserMapper;
+import online.xuanwei.bbs.mapper.*;
 import online.xuanwei.bbs.model.*;
 import online.xuanwei.bbs.util.CommentTypeEnum;
+import online.xuanwei.bbs.util.NotificationEnum;
 import online.xuanwei.bbs.util.ResultGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +31,44 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CommentMapperExt commentMapperExt;
+
+    @Autowired
+    private NotificationMapper notificationMapper;
+
+    @Autowired
+    private QuestionMapper questionMapper;
+
     @Transactional
     public Object insert(Comment comment,Integer userId){
         comment.setCommentator(userId);
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(comment.getGmtCreate());
         comment.setLikeCount(0L);
+        comment.setCommentCount(0);
         Question question = new Question();
         question.setId(comment.getParentId().intValue());
         int temp = commentMapper.insert(comment);
         questionService.incCommentCount(question);
+       Notification notification = new Notification();
+        notification.setNotifier(userId.longValue()); // 发起人id
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setOuterid(comment.getParentId().intValue());
+        notification.setStatus(0);
+        if(comment.getType() >1){  //判断是否二级评论
+            commentMapperExt.incCommentCount(comment);
+            notification.setType(NotificationEnum.REPLY_COMMENTS.getType());
+            Comment commentTemp = commentMapper.selectByPrimaryKey(comment.getType().longValue());
+            notification.setReceiver(commentTemp.getCommentator().longValue());
+            notificationMapper.insert(notification);
+
+        }else {
+            Question questionTemp = questionMapper.selectByPrimaryKey(comment.getParentId().intValue());
+            notification.setReceiver(questionTemp.getCreator().longValue());
+            notification.setType(NotificationEnum.REPLY_QUESTION.getType());
+            notificationMapper.insert(notification);
+        }
         if (temp != 1){
             throw  new CustomizeException(CustomizeErrorCode.COMMENT_FAIL);
         }else{
@@ -50,6 +78,7 @@ public class CommentService {
 
     public List<CommentDTO> listByTargetId(Integer id, Integer type) {
         CommentExample commentExample = new CommentExample();
+        commentExample.setOrderByClause("gmt_create desc");
         commentExample.createCriteria().andParentIdEqualTo(id.longValue()).andTypeEqualTo(type);
         List<Comment> comments = commentMapper.selectByExample(commentExample);
         if(comments.size() == 0){
@@ -64,7 +93,6 @@ public class CommentService {
         List<User> userList = userMapper.selectByExample(userExample);
         System.out.println(userList.size());
         Map<Integer,User> userMap = userList.stream().collect(Collectors.toMap(user -> user.getId(),user ->user));
-        System.out.println(userMap.get(2).getAccountId());
         List<CommentDTO> commentDTOS = comments.stream().map(comment ->
                 {
                     CommentDTO commentDTO = new CommentDTO();

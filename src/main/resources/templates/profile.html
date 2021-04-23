@@ -56,6 +56,16 @@
 
             <block th:if="${section} == 'replies'">
                 <span th:text="${sectionName}"></span>
+                <a href="/profile/readAll">全部已读</a>
+
+                <div th:each="notification:${notificationlist}">
+                    <span th:text="${notification.getNotifierUser().getName()}"></span>
+                    <a th:href="@{/question(id=${notification.getOuterid()})}">
+                    <span th:text="${notification.getMessage()}"></span>
+                    </a>
+                    <span th:text="${notification.getReceiverUser().getName()}"></span>
+                </div>
+
             </block>
 
         </div>
@@ -64,7 +74,11 @@
                 <a th:href="@{/profile/questions}" th:class="${section == 'questions'}?'list-group-item active':'list-group-item'">
                     我的问题
                 </a>
-                <a th:href="@{/profile/replies}" th:class="${section == 'replies'}?'list-group-item active':'list-group-item'">最新回复</a>
+                <a th:href="@{/profile/replies}" th:class="${section == 'replies'}?'list-group-item active':'list-group-item'">最新回复</span>
+                    <th:block th:if="${notificationlist} != null">
+                        <span th:text="${notificationlist.size()}"></span>
+                    </th:block>
+                </a>
                 <a href="#" class="list-group-item">Porta ac consectetur ac</a>
                 <a href="#" class="list-group-item">Vestibulum at eros</a>
             </div>

@@ -1,10 +1,13 @@
 package online.xuanwei.bbs.controller;
 
+import online.xuanwei.bbs.dto.NotificationDTO;
 import online.xuanwei.bbs.dto.PaginationDTO;
 import online.xuanwei.bbs.dto.QuestionDTO;
 import online.xuanwei.bbs.exception.CustomizeErrorCode;
 import online.xuanwei.bbs.exception.CustomizeException;
 import online.xuanwei.bbs.mapper.UserMapper;
+import online.xuanwei.bbs.model.User;
+import online.xuanwei.bbs.service.NotificationService;
 import online.xuanwei.bbs.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +27,9 @@ public class IndexController {
     @Autowired
     QuestionService questionService;
 
+    @Autowired
+    NotificationService notificationService;
+
     @GetMapping({"/","index"})
     public String index(HttpServletRequest request, Model model,
                         @RequestParam(name = "page",defaultValue = "1") Integer page,
@@ -35,7 +41,7 @@ public class IndexController {
         paginationDTO.setPage(page);
         paginationDTO.setSize(size);
         paginationDTO.setPages(size, questionService.getCount());
-        //System.out.println("测试页码"+page+"   "+paginationDTO.getPages());
+
         if (page>paginationDTO.getPages()){
             throw new CustomizeException(CustomizeErrorCode.PAGE_NOT_FOUND);
         }
@@ -45,6 +51,12 @@ public class IndexController {
             model.getAttribute("questions");
             model.addAttribute("questions",paginationDTO);
 
+        }
+
+        User user = (User) request.getSession().getAttribute("user");
+        if (user !=null) {
+            List<NotificationDTO> notificationDTOList = notificationService.getNotifier(user);
+            model.addAttribute("notification", notificationDTOList);
         }
         return "index";
     }
