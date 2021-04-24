@@ -33,8 +33,9 @@ public class IndexController {
     @GetMapping({"/","index"})
     public String index(HttpServletRequest request, Model model,
                         @RequestParam(name = "page",defaultValue = "1") Integer page,
-                        @RequestParam(name = "size",defaultValue = "7") Integer size){
-        System.out.println(page);
+                        @RequestParam(name = "size",defaultValue = "7") Integer size,
+                        @RequestParam(name = "search",required = false) String search){
+        System.out.println(page+"search"+search);
         List<QuestionDTO> questionDTOList = questionService.list(page,size);
         PaginationDTO paginationDTO = new PaginationDTO();
         paginationDTO.setQuestionDTOList(questionDTOList);
@@ -48,7 +49,7 @@ public class IndexController {
         if(model.getAttribute("questions")==null) {
             model.addAttribute("questions", paginationDTO);
         }else{
-            model.getAttribute("questions");
+           // model.getAttribute("questions");
             model.addAttribute("questions",paginationDTO);
 
         }

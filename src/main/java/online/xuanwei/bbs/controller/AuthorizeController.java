@@ -6,6 +6,7 @@ import online.xuanwei.bbs.mapper.UserMapper;
 import online.xuanwei.bbs.model.User;
 import online.xuanwei.bbs.model.UserExample;
 import online.xuanwei.bbs.provider.GithubProvider;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -61,6 +62,7 @@ public class AuthorizeController {
                 List<User> users = userMapper.selectByExample(userExample);
                 if(users.size()  == 0 ) {
                 User user = new User();
+                    BeanUtils.copyProperties(githubUser,user);
                 user.setAccountId(String.valueOf(githubUser.getId()));
                 user.setName(githubUser.getName());
                 String token = UUID.randomUUID().toString();
@@ -68,7 +70,7 @@ public class AuthorizeController {
                 user.setGmtCreate(System.currentTimeMillis());
                 user.setGmtModified(user.getGmtCreate());
                 user.setBio(githubUser.getBio());
-                user.setAvatarUrl(githubUser.getAvatar_url());
+                user.setAvatarUrl(githubUser.getAvatarUrl());
                 userMapper.insert(user);
                 Cookie cookie = new Cookie("token", token);
                 cookie.setMaxAge(60 * 60 * 24 * 20);

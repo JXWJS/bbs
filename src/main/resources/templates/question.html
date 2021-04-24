@@ -39,8 +39,8 @@
             </div>
             <p/>
 
-            <div>
-                <span th:text="${question.getDescription()}"></span>
+            <div id="markdown-view">
+                <textarea style="display: none;" th:text="${question.getDescription()}"></textarea>
                 <hr/>
             </div>
 
@@ -135,6 +135,17 @@
     </div>
 </div>
 </body>
+
+<script>
+    $(function (){
+    var markdownView= editormd.markdownToHTML("markdown-view",{
+        htmlDecode:true,
+        htmlDebode: "style,script,iframe",
+        emoji:true
+
+    });
+    });
+</script>
 
 
 </html>

@@ -35,8 +35,8 @@ public class ProfileController {
                          @PathVariable(name = "action") String action , Model model,
                           @RequestParam(name = "page",defaultValue = "1") Integer page,
                           @RequestParam(name = "size",defaultValue = "7") Integer size){
+        user = (User)httpServletRequest.getSession().getAttribute("user");
         if("questions".equals(action)){
-            user = (User)httpServletRequest.getSession().getAttribute("user");
             List<QuestionDTO> questionDTOList = questionService.getMYQuestionDTOList(user.getId(),page, size);
             PaginationDTO paginationDTO = new PaginationDTO();
             paginationDTO.setQuestionDTOList(questionDTOList);

@@ -6,15 +6,9 @@ import lombok.Data;
 public class GithubUser {
 
     private String name;
-    private long id;
+    private Long id;
     private String bio;
-    private String avatar_url;
+    private String avatarUrl;
 
-    public GithubUser(){}
-    public GithubUser(String name, long id, String bio) {
-        this.name = name;
-        this.id = id;
-        this.bio = bio;
-    }
 
 }
