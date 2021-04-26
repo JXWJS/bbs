@@ -31,7 +31,13 @@
                 <div class="form-group">
                     <label for="tag">添加标签:</label>
                     <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签，以，间隔">
+                    <p></p>
+                    <label for="tag">选择分类:</label>
+                    <select class="form-control" id="select">
+                        <option  th:value="${category.getId()}"  th:text="${category.getCategoryName()}" th:each="category:${categoryList}"></option>
+                    </select>
                 </div>
+
                 <button type="button" class="btn btn-success" id="saveButton">提交</button>
             </div>
                 </th:block>
@@ -53,7 +59,13 @@
                         <div class="form-group">
                             <label for="tag">添加标签:</label>
                             <input type="text" class="form-control" th:value="${edit.tag}" name="tag" placeholder="输入标签，以，间隔">
+                        <p></p>
+                            <label for="tag">选择分类:</label>
+                            <select class="form-control" name="selectEdit">
+                                <option  th:value="${category.getId()}"  th:text="${category.getCategoryName()}" th:each="category:${categoryList}"></option>
+                            </select>
                         </div>
+
                         <button type="submit" class="btn btn-success">提交</button>
                     </div>
 

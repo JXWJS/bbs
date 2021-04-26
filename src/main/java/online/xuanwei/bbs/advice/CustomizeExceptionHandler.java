@@ -31,6 +31,7 @@ public class CustomizeExceptionHandler {
         }else{
                 HttpStatus httpStatus = getStatus(httpServletRequest);
                 if (throwable instanceof CustomizeException) {
+                    System.out.println("1111111111111"+throwable.getMessage());
                     model.addAttribute("message", throwable.getMessage());
                 }
                 return  new ModelAndView("error");

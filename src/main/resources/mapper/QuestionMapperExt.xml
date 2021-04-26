@@ -51,7 +51,8 @@
     set title = #{title,jdbcType=VARCHAR},
     gmt_modified = #{gmtModified,jdbcType=BIGINT},
     description = #{description,jdbcType=LONGVARCHAR},
-    tag = #{tag,jdbcType=VARCHAR}
+    tag = #{tag,jdbcType=VARCHAR},
+        category_id = #{categoryId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -61,4 +62,33 @@
     and id != #{id,jdbcType=INTEGER}
 
   </select>
+
+  <select id="countOrSearch" parameterType="online.xuanwei.bbs.dto.PageDTO" resultType="INTEGER">
+    select count(*) from question
+
+    <if test="search !=null">
+      where title regexp #{search,jdbcType=VARCHAR}
+    </if>
+
+    <if test="categoryId !=null">
+      where category_id = #{categoryId,jdbcType=INTEGER}
+    </if>
+
+  </select>
+
+  <select id="listOrSearch" parameterType="online.xuanwei.bbs.dto.PageDTO" resultMap="BaseResultMap">
+    select * from question
+
+    <if test="search !=null">
+      where title regexp #{search,jdbcType=VARCHAR}
+    </if>
+
+    <if test="categoryId !=null">
+      where category_id = #{categoryId,jdbcType=INTEGER}
+    </if>
+order by gmt_create desc limit #{size,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
+
+  </select>
+
+
 </mapper>

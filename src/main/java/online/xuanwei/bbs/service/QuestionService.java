@@ -1,7 +1,12 @@
 package online.xuanwei.bbs.service;
 
+import online.xuanwei.bbs.advice.CustomizeExceptionHandler;
+import online.xuanwei.bbs.dto.PageDTO;
+import online.xuanwei.bbs.dto.PaginationDTO;
 import online.xuanwei.bbs.dto.QuestionDTO;
 import online.xuanwei.bbs.dto.TagDTO;
+import online.xuanwei.bbs.exception.CustomizeErrorCode;
+import online.xuanwei.bbs.exception.CustomizeException;
 import online.xuanwei.bbs.mapper.QuestionMapper;
 import online.xuanwei.bbs.mapper.QuestionMapperExt;
 import online.xuanwei.bbs.mapper.UserMapper;
@@ -30,11 +35,14 @@ public class QuestionService {
 
     List<QuestionDTO> questionDTOList;
 
-    public List<QuestionDTO> list(Integer page, Integer size) {
+    public PaginationDTO list(PageDTO pageDTO,Integer page,Integer size) {
         Integer offset = size*(page-1);
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size));
+        pageDTO.setOffset(offset);
+        pageDTO.setSize(size);
+        List<Question> questionList = questionMapperExt.listOrSearch(pageDTO);
+        if (questionList == null){
+            throw new CustomizeException(CustomizeErrorCode.SEARCH_NOT_FOUND);
+        }
         questionDTOList = new ArrayList<>();
         for (Question question:questionList
              ) {
@@ -44,8 +52,16 @@ public class QuestionService {
             questionDTO.setUser(users.get(0));
             questionDTOList.add(questionDTO);
         }
-        return questionDTOList;
+        PaginationDTO paginationDTO = new PaginationDTO();
+        paginationDTO.setQuestionDTOList(questionDTOList);
+        return paginationDTO;
     }
+
+    public Integer countORSearch(PageDTO pageDTO){
+        return questionMapperExt.countOrSearch(pageDTO);
+    }
+
+
 
     public Integer getCount(){
        return (int)questionMapper.countByExample(new QuestionExample());

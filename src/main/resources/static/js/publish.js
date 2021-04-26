@@ -1,15 +1,18 @@
+
+
 $(function () {
     $("#saveButton").click(function () {
         var title = $("#title").val();
         var description = $("#description").val();
         var tag = $("#tag").val();
-        check_publish(title,description,tag);
+        var category = $("#select option:selected").val()
+        check_publish(title,description,tag,category);
 
     })
 
 })
 
-function check_publish(title,description,tag){
+function check_publish(title,description,tag,category){
     if (title.length==0 || description.length==0 || tag == 0) {
         $(".modal-title").html("提醒");
         document.getElementById("info").innerHTML="<h3><font color='#a52a2a'>输入的内容不能为空!</font></h3>"
@@ -21,7 +24,7 @@ function check_publish(title,description,tag){
             dataType:"JSON",
             type:"get",
             url:"/doPublish",
-            data:{title:title,description:description,tag:tag},
+            data:{title:title,description:description,tag:tag,category:category},
             success:function (result) {
                 alert(result.message);
                 //清空输入框内容
